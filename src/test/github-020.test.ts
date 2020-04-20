@@ -34,7 +34,6 @@ suite('Github Issue #20 Tests', () => {
 
   test('RI should handle fat-arrow as a pivot char sequence, centered', () => {
     const ind  = new Indenter();
-    ind.centerJustify = true;
 
     const res = ind.indent(raw);
 
@@ -44,7 +43,6 @@ suite('Github Issue #20 Tests', () => {
   test('RI should handle fat-arrow as a pivot char sequence, centered alphabetically', () => {
     const ind  = new Indenter();
     ind.alphabetize = true;
-    ind.centerJustify = true;
 
     const res = ind.indent(raw);
 
