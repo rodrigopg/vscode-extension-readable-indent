@@ -1,7 +1,7 @@
 const arraySort = (lineA: string, lineB: string): number => {
   const a = lineA.trim();
   const b = lineB.trim();
-  
+
   if (a && b) {
     return (a < b) ? -1 : 1;
   } else if (a && !b) {
@@ -18,10 +18,10 @@ export const customSort = (a: string[]): string[] => {
     if (s.trim() === '') {
       return '';
     }
-    
+
     return b.shift() || '';
   });
-  
+
   return preservedNewlines;
 };
 

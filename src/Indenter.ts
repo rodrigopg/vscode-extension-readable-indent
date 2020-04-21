@@ -50,6 +50,7 @@ class Indenter {
     this.pivotIndexAlt = 0;
     this.pivotSeparator = ':=';
     this.pivots = {
+      'as': { count: 0, index: 0 },
       ':=': { count: 0, index: 0 }
     };
   }
@@ -78,22 +79,12 @@ class Indenter {
    * Detects pivot char sequence, and sets private var `pivotSeparator`
    */
   private determineIndentType(): void {
-    let tabSize: number = 4;
     let focusPivot: string;
     let focusPivotIndex: number = 99999;
 
-    // convert tabs to spaces
-    if (typeof this._textEditorOptions.tabSize === 'number') {
-      tabSize = this._textEditorOptions.tabSize;
-    }
-
     this.locRaw.forEach(line => {
-      line = this.cleanRightWhitespace(line);
-      line = line.replace(/\t/g, ''.padEnd(tabSize, ' '));
-
       focusPivot = '';
       focusPivotIndex = 99999;
-
 
       for (let pivot in this.pivots) {
         let idx = line.indexOf(pivot);
@@ -147,7 +138,7 @@ class Indenter {
    * @returns string Line cleansed of right whitespace
    */
   private cleanRightWhitespace(line: string): string {
-    // line = line.replace(/\s+$/g, '');
+    line = line.replace(/\s+$/g, '');
     return line.trimRight();
   }
 
@@ -158,6 +149,10 @@ class Indenter {
     this.loc = this.locRaw.map(line_s => {
       let startFrom = 0;
       let focusPivotIndex = line_s.indexOf(this.pivotSeparator, startFrom);
+
+      if (line_s.trim().replace(/\t/g, ' ').split(' ').indexOf(this.pivotSeparator, startFrom) === -1) {
+        focusPivotIndex = -1;
+      }
 
       if (focusPivotIndex > -1) {
         const pivots = line_s.match(new RegExp(this.pivotSeparator, 'g'));
@@ -258,6 +253,8 @@ class Indenter {
       this.locRaw = code.split(/\n/);
     }
 
+    this.locRaw = this.replaceTabWithSpace(this.locRaw);
+
     this.sortLines();
 
     this.determineIndentType();
@@ -269,7 +266,7 @@ class Indenter {
         const line0 = line[0].trim();
 
         return [
-          this.initialIndent,
+          this.initialIndent.replace(''.padEnd(4, ' '), "\t"),
           line0.padEnd(this.pivotIndexAlt - this.initialIndent.length, this.padChar),
           ' ',
           this.pivotSeparator,
@@ -278,9 +275,25 @@ class Indenter {
         ].join('');
 
       } else {
-        return line.join('').replace(/[\n|\r]/gm, '');
+        return line.join('');//.replace(/[\n|\r]/gm, '');
       }
     }).join('\n');
+  }
+
+  replaceTabWithSpace(lines: string[]) {
+    let tabSize: number = 4;
+
+    // convert tabs to spaces
+    if (typeof this._textEditorOptions.tabSize === 'number') {
+      tabSize = this._textEditorOptions.tabSize;
+    }
+
+    for (let index = 0; index < lines.length; index++) {
+      lines[index] = lines[index].replace(/\t/g, ''.padEnd(tabSize, ' '));
+      lines[index] = this.cleanRightWhitespace(lines[index]);
+    }
+
+    return lines;
   }
 }
 
