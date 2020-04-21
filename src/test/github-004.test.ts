@@ -27,7 +27,6 @@ suite("Github Issue #4 Tests", function () {
 
     const ind = new Indenter();
     ind.alphabetize = false;
-    ind.centerJustify = true;
     foo = ind.indent(code);
     assert.equal(foo, expected);
   });

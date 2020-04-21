@@ -30,7 +30,6 @@ suite('Github Issue #8 Tests', () => {
     const res2 = ind.indent(noIndentionNoAlpha);
     const originHash2 = ind.originHash;
 
-    ind.centerJustify = true;
     const res3 = ind.indent(noIndentionNoAlpha);
     const originHash3 = ind.originHash;
 

@@ -1,62 +1,36 @@
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+<!-- [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/) -->
 
-# Readable Indent VS Code Extension
+# Indentação legível
 
-Indents imports, KVPs (like object literals) with a pivot point, padding whitespace for easy scanability.
+Identação de declaração de variáveis de forma legível para código advpl/tlpp.
 
+Extensão baseada na [Readable Indent](https://marketplace.visualstudio.com/items?itemName=cnojima.readable-indent) extensão feita para JS e portada para funcionar no advpl/tlpp
 
-## Features
+## Recursos
 
-Simple indentation will make your code easier to visually scan.  This extension will indent two common patterns on a pivot character:  **`=`** or  **`:`**
+Esta extensão vai facilitar a visualização do seu código, tornando-o mais legível. Ela vai realizar a indentação se baseando no seguinte identificador. **`:=`** Futuramente mais identificadores poderão ser adicionados.
 
-When applying readable-indent, use the pattern that makes the code snippet most readable:
+As seguintes indentações estão disponíveis:
 
-### Left-justified readable-indent
+### Indentação
 ![left-justified](docs/indent.gif)
 
-### Left-justified, alphabetized readable-indent
-![left-justified](docs/indent-alpha.gif)
+### Indentação com ordenação alfabética
+![left-justified](docs/indent.gif)
 
-### Center-justified readable-indent
-![center-justified](docs/indent-center.gif)
+## Uso
+1. Selecione a parte do código que deseja indentar.
+2. Ative o menu de contexto (clique direito), o atalho do teclado, ou o comando
 
-### Center-justified, alphabetized readable-indent
-![center-justified](docs/indent-center-alpha.gif)
-
-## Usage
-1. Select code snippet to make readable.
-2. Use context menu (right|ctrl click) or key mapping to apply readable-indent
-
-|                              	| Mac OSX             	| Windows/Linux         	|
+| Comando                      	| Mac OSX             	| Windows/Linux         	|
 |------------------------------	|---------------------	|-----------------------	|
-| Indent                       	| `cmd-i cmd-a`       	| `ctrl-i ctrl-a`       	|
-| Indent Alphabetized          	| `cmd-i cmd-shift-a` 	| `ctrl-i ctrl-shift-a` 	|
-| Indent Centered              	| `cmd-i cmd-b`       	| `ctrl-i ctrl-b`       	|
-| Indent Centered Alphabetized 	| `cmd-i cmd-shift-b` 	| `ctrl-i ctrl-shift-b` 	|
+| Indentação                    | `cmd-i cmd-a`       	| `ctrl-i ctrl-a`       	|
+| Indentação Ordem Alfabética  	| `cmd-i cmd-shift-a` 	| `ctrl-i ctrl-shift-a` 	|
 
-## VS Code Configuration
+## Erros conhecidos
 
-#### Minimum Whitespace Before Pivot (Left-justfied Indent only)
+Caso encontre, nos avise.
 
-Readable Indent adds a simple configuration to set a minimum whitespace gap from the start of the `key` to the pivot character.  E.g.:
-```json
-{
-  "a": "foo",
-  "bc": "bar"
-}
-```
-With a setting of `10`, the above will be indented as:
-```json
-{
-  "a"      : "foo",
-  "bc"     : "bar"
-}
-```
+## Notas de Release
 
-## Known Issues
-
-Obviously this indentation is conflicted with OOTB rules for `prettier`.  Pedagogy is out of scope for this extension ;).
-
-## Release Notes
-
-[See CHANGELOG for details](./CHANGELOG.md)
+[Veja o CHANGELOG para detalhes](./CHANGELOG.md)

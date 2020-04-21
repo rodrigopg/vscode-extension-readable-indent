@@ -1,8 +1,8 @@
 {
-	"name": "readable-indent",
-	"publisher": "cnojima",
-	"displayName": "Readable Indent",
-	"description": "Indents imports, KVPs (like object literals) with a pivot point, padding whitespace for easy scanability.",
+	"name": "indentacao-variaveis-advpl",
+	"publisher": "rodrigopg",
+	"displayName": "Indentação de variáveis para Advpl/TLPP",
+	"description": "Indentação de variáveis criadas no padrão Advpl para uma visão mais legível.",
 	"icon": "docs/favicon.png",
 	"qna": "marketplace",
 	"categories": [
@@ -11,8 +11,12 @@
 	],
 	"keywords": [
 		"editor",
+		"advpl",
+		"tlpp",
+		"indentacao",
 		"indent",
-		"code indentation"
+		"totvs",
+		"customize soluções"
 	],
 	"badges": [
 		{
@@ -23,27 +27,24 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/cnojima/vscode-extension-readable-indent.git"
+		"url": "https://github.com/rodrigopg/vscode-extension-readable-indent.git"
 	},
-	"version": "1.1.0",
+	"version": "2.0.3",
 	"engines": {
 		"vscode": "^1.32.0"
 	},
 	"main": "./out/extension.js",
 	"activationEvents": [
 		"onCommand:extension.readableIndent.indent",
-		"onCommand:extension.readableIndent.indentAlpha",
-		"onCommand:extension.readableIndent.indentWithPivot",
-		"onCommand:extension.readableIndent.indentWithPivotAlpha"
+		"onCommand:extension.readableIndent.indentAlpha"
 	],
 	"contributes": {
 		"configuration": [
 			{
-				"title": "Minimum whitespace before pivot",
 				"properties": {
 					"extension.readableIntent.minimumWhitespaceBeforePivot": {
 						"default": 0,
-						"markdownDescription": "The minimum number of whitespace chars (using space) to calculate BEFORE the pivot character. \n\n*E.g. setting `10`:*\n```json\n{\n  \"a\": \"foo\"\n}```\n*results in:*\n```json\n{\n  \"a\"      : \"foo\"\n}```",
+						"title": "Quantidade de espaços utilizados na indentação do código",
 						"type": "integer"
 					}
 				}
@@ -52,19 +53,11 @@
 		"commands": [
 			{
 				"command": "extension.readableIndent.indent",
-				"title": "Readable Indent"
-			},
-			{
-				"command": "extension.readableIndent.indentWithPivot",
-				"title": "Readable Indent Center"
+				"title": "Indentação de variáveis"
 			},
 			{
 				"command": "extension.readableIndent.indentAlpha",
-				"title": "Readable Indent - alphabetized"
-			},
-			{
-				"command": "extension.readableIndent.indentWithPivotAlpha",
-				"title": "Readable Indent Center - alphabetized"
+				"title": "Indentação de variáveis - Ordem Alfabética"
 			}
 		],
 		"keybindings": [
@@ -75,21 +68,9 @@
 				"when": "editorTextFocus && !editorReadonly"
 			},
 			{
-				"command": "extension.readableIndent.indentWithPivot",
-				"key": "ctrl+i ctrl+b",
-				"mac": "cmd+i cmd+b",
-				"when": "editorTextFocus && !editorReadonly"
-			},
-			{
 				"command": "extension.readableIndent.indentAlpha",
 				"key": "ctrl+i ctrl+shift+a",
 				"mac": "cmd+i cmd+shift+a",
-				"when": "editorTextFocus && !editorReadonly"
-			},
-			{
-				"command": "extension.readableIndent.indentWithPivotAlpha",
-				"key": "ctrl+i ctrl+shift+b",
-				"mac": "cmd+i cmd+shift+b",
 				"when": "editorTextFocus && !editorReadonly"
 			}
 		],
@@ -101,18 +82,8 @@
 					"when": "editorTextFocus && !editorReadonly"
 				},
 				{
-					"command": "extension.readableIndent.indentWithPivot",
-					"group": "2_indentation@2",
-					"when": "editorTextFocus && !editorReadonly"
-				},
-				{
 					"command": "extension.readableIndent.indentAlpha",
 					"group": "2_indentation@3",
-					"when": "editorTextFocus && !editorReadonly"
-				},
-				{
-					"command": "extension.readableIndent.indentWithPivotAlpha",
-					"group": "2_indentation@4",
 					"when": "editorTextFocus && !editorReadonly"
 				}
 			]
@@ -128,12 +99,12 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^2.2.42",
-		"@types/node": "^10.12.21",
+		"@types/node": "^10.17.20",
 		"cz-conventional-changelog": "^2.1.0",
 		"standard-version": "^5.0.2",
-		"tslint": "^5.12.1",
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28"
+		"tslint": "^5.20.1",
+		"typescript": "^3.8.3",
+		"vscode": "^1.1.36"
 	},
 	"config": {
 		"commitizen": {
