@@ -2,6 +2,14 @@ const arraySort = (lineA: string, lineB: string): number => {
   const a = lineA.trim();
   const b = lineB.trim();
 
+  if (a.indexOf("default") > -1 && b.indexOf("default") > -1) {
+    return (a < b) ? -1 : 1;
+  } else if (a.indexOf("default") > -1) {
+    return 1;
+  } else if (b.indexOf("default") > -1) {
+    return -1;
+  }
+
   if (a && b) {
     return (a < b) ? -1 : 1;
   } else if (a && !b) {
@@ -9,6 +17,7 @@ const arraySort = (lineA: string, lineB: string): number => {
   } else if (!a && b) {
     return 1;
   }
+
   return 0;
 };
 
