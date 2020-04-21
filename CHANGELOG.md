@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.0.2](https://github.com/rodrigopg/vscode-extension-readable-indent/compare/0.0.1...0.0.2) (2020-04-21)
+## [2.0.2](https://github.com/rodrigopg/vscode-extension-readable-indent/compare/v2.0.1...v2.0.2) (2020-04-21)
 
 
 ### Features
@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file. See [standa
 * Incluído pivot `as`
 
 
-## [0.0.1](https://github.com/rodrigopg/vscode-extension-readable-indent/compare/0.0.1...0.0.1) (2020-04-20)
+## [2.0.1](https://github.com/rodrigopg/vscode-extension-readable-indent/compare/v1.2.1...v2.0.1) (2020-04-20)
 
 
 ### Bug Fixes
