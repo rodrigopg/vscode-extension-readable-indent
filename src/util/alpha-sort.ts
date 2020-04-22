@@ -2,14 +2,16 @@ import findEntireWordIndex from './string-util';
 import { strict } from 'assert';
 
 const arraySort = (lineA: string, lineB: string): number => {
-  const aLevel = getPriorityLevel(lineA.trim());
-  const bLevel = getPriorityLevel(lineB.trim());
+  const a = lineA.trim().toLowerCase();
+  const b = lineB.trim().toLowerCase();
+  const aLevel = getPriorityLevel(a);
+  const bLevel = getPriorityLevel(b);
 
   if (aLevel !== bLevel) {
     return (aLevel < bLevel) ? -1 : 1;
   }
 
-  return (lineA.trim() < lineB.trim()) ? -1 : 1;
+  return (a < b) ? -1 : 1;
 };
 
 export const customSort = (a: string[]): string[] => {
