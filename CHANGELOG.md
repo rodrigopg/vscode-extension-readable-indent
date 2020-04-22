@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [2.1.0](https://github.com/rodrigopg/vscode-extension-readable-indent/compare/v2.0.3...v2.1.0) (2020-04-22)
+
+
+### Bug Fixes
+
+* Correção na ordenação ignorando o case sensitive. ([8949e48](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/8949e48b2dd8e2e6fccee351a525959527284718))
+
+
+### Features
+
+* Criada ordem de prioridades, respeitando escopo de variáveis ([3a8b509](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/3a8b509c0b933110d81e5313aa3f8c17e9659dbf))
+* Quando pivot é alfanumérico `Ex: as`, considera palavra inteira, evitando correspondência errada. ([9f0fa35](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/9f0fa3551bed5c46ca84b1e4f8288b35441682be))
+
+
+
 ## [2.0.3](https://github.com/rodrigopg/vscode-extension-readable-indent/compare/v2.0.2...v2.0.3) (2020-04-21)
 
 
