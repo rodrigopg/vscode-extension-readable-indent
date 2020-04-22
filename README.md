@@ -16,7 +16,7 @@ As seguintes indentações estão disponíveis:
 ![left-justified](docs/indent.gif)
 
 ### Indentação com ordenação alfabética
-![left-justified](docs/indent.gif)
+![left-justified](docs/indent-alpha.gif)
 
 ## Uso
 1. Selecione a parte do código que deseja indentar.
