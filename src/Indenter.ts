@@ -1,5 +1,6 @@
 import { TextEditorOptions, WorkspaceConfiguration } from "vscode";
 import customAlphaSort from './util/alpha-sort';
+import findEntireWordIndex from './util/string-util';
 import hash from './util/hash';
 
 type ConfigOptions = { minimumWhitespaceBeforePivot: number } | WorkspaceConfiguration;
@@ -56,6 +57,32 @@ class Indenter {
   }
 
   /**
+   * Indents indenter
+   * @returns string Indented as requested
+   */
+  public indent(code: string): string {
+    this.reset();
+
+    if (this.reuseOriginal(code)) {
+      this.locRaw = this._origin.split(/\n/);
+    } else {
+      this._origin = code;
+      this._originHash = hash(this._origin);
+      this.locRaw = code.split(/\n/);
+    }
+
+    this.locRaw = this.replaceSpaceWithTab(this.locRaw);
+
+    this.sortLines();
+
+    this.determineIndentType();
+
+    this.splitLine();
+
+    return this.joinLines();
+  }
+
+  /**
    * Generate a md5 hash to determine if this is a permutation
    * @param 
    */
@@ -87,7 +114,7 @@ class Indenter {
       focusPivotIndex = 99999;
 
       for (let pivot in this.pivots) {
-        let idx = line.indexOf(pivot);
+        let idx = findEntireWordIndex(line, pivot);
         this.pivots[pivot].index = (idx > -1) ? idx : 100000;
 
         // logic to increment found pivot count
@@ -117,7 +144,7 @@ class Indenter {
       if (indent.length > 0) {
         if (!this.initialIndent) {
           this.initialIndent = indent;
-          this.padChar = this.initialIndent.charAt(0);
+          // this.padChar = this.initialIndent.charAt(0);
         }
       }
     });
@@ -145,33 +172,11 @@ class Indenter {
   /**
    * Finds pivot index and seeds property `loc`
    */
-  private findPivotIndex() {
+  private splitLine() {
     this.loc = this.locRaw.map(line_s => {
-      let startFrom = 0;
-      let focusPivotIndex = line_s.indexOf(this.pivotSeparator, startFrom);
-
-      if (line_s.trim().replace(/\t/g, ' ').split(' ').indexOf(this.pivotSeparator, startFrom) === -1) {
-        focusPivotIndex = -1;
-      }
+      let focusPivotIndex = findEntireWordIndex(line_s, this.pivotSeparator);
 
       if (focusPivotIndex > -1) {
-        const pivots = line_s.match(new RegExp(this.pivotSeparator, 'g'));
-
-        if (pivots && pivots.length > 1) {
-          let lenPivots = pivots.length || 0;
-
-          while (!this.isUseablePivot(line_s, focusPivotIndex) && lenPivots > 1) {
-            lenPivots--;
-            startFrom = focusPivotIndex;
-
-            const _pivotIndex = line_s.indexOf(this.pivotSeparator, startFrom + this.pivotSeparator.length);
-
-            if (_pivotIndex > startFrom) {
-              focusPivotIndex = _pivotIndex;
-            }
-          }
-        }
-
         const line = [
           this.cleanRightWhitespace(line_s.substr(0, focusPivotIndex)),
           line_s.substr(focusPivotIndex + this.pivotSeparator.length),
@@ -191,6 +196,46 @@ class Indenter {
 
       return [line_s];
     });
+  }
+
+  private joinLines(): string {
+    return this.loc.map(line => {
+      if (line[0] && line[1]) {
+        const line0 = line[0].trim();
+        const line1 = line[1].trim();
+
+        return [
+          this.initialIndent,
+          line0.padEnd(this.pivotIndexAlt - this.initialIndent.length, this.padChar),
+          ' ',
+          this.pivotSeparator,
+          ' ',
+          line1
+        ].join('');
+
+      } else {
+        return line.join('');//.replace(/[\n|\r]/gm, '');
+      }
+    }).join('\n');
+  }
+
+  private replaceSpaceWithTab(lines: string[]) {
+    let tabSize: number = 4;
+    let tab: string = "\t";
+    let spaces: string = ''.padEnd(tabSize, ' ');
+
+    // convert tabs to spaces
+    if (typeof this._textEditorOptions.tabSize === 'number') {
+      tabSize = this._textEditorOptions.tabSize;
+      spaces = ''.padEnd(tabSize, ' ');
+    }
+
+    for (let index = 0; index < lines.length; index++) {
+      // lines[index] = lines[index].replace(spaces,tab);
+      lines[index] = this.cleanRightWhitespace(lines[index]);
+    }
+
+    return lines;
   }
 
   private isUseablePivot(line: string, index: number): boolean {
@@ -238,63 +283,6 @@ class Indenter {
     this._alphabetize = alphabetize;
   }
 
-  /**
-   * Indents indenter
-   * @returns string Indented as requested
-   */
-  public indent(code: string): string {
-    this.reset();
-
-    if (this.reuseOriginal(code)) {
-      this.locRaw = this._origin.split(/\n/);
-    } else {
-      this._origin = code;
-      this._originHash = hash(this._origin);
-      this.locRaw = code.split(/\n/);
-    }
-
-    this.locRaw = this.replaceTabWithSpace(this.locRaw);
-
-    this.sortLines();
-
-    this.determineIndentType();
-
-    this.findPivotIndex();
-
-    return this.loc.map(line => {
-      if (line[0] && line[1]) {
-        const line0 = line[0].trim();
-
-        return [
-          this.initialIndent.replace(''.padEnd(4, ' '), "\t"),
-          line0.padEnd(this.pivotIndexAlt - this.initialIndent.length, this.padChar),
-          ' ',
-          this.pivotSeparator,
-          ' ',
-          line[1].trim()
-        ].join('');
-
-      } else {
-        return line.join('');//.replace(/[\n|\r]/gm, '');
-      }
-    }).join('\n');
-  }
-
-  replaceTabWithSpace(lines: string[]) {
-    let tabSize: number = 4;
-
-    // convert tabs to spaces
-    if (typeof this._textEditorOptions.tabSize === 'number') {
-      tabSize = this._textEditorOptions.tabSize;
-    }
-
-    for (let index = 0; index < lines.length; index++) {
-      lines[index] = lines[index].replace(/\t/g, ''.padEnd(tabSize, ' '));
-      lines[index] = this.cleanRightWhitespace(lines[index]);
-    }
-
-    return lines;
-  }
 }
 
 export default Indenter;
