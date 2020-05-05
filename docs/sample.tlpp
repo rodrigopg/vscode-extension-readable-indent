@@ -1,11 +1,10 @@
 /* eslint-disable */
-Local oExcel := FWMsExcel():New()
-local oExcApp := MsExcel():New()
-local cArq := ""
-Local cDirTmp := GetTempPath()
-local cTitulo := "Relação de Compras p/CC"
-Local cDir := GetSrvProfString("Startpath","")
-local nx := 0
-private cPerg := "RCOMR011  "
-private aDados := {}
-private aCabec:= {}
+Default nParam := 0
+Default cParam := "parametro"
+Private cAAA := "TMP" as character
+Private cBBB := "TMP" as character
+Public lAAA := AllwaysTrue() as logical
+Public lBBB := AllwaysTrue() as logical
+Public lCCC := AllwaysTrue() as logical
+Local aArea := getArea() as array
+Local a123 := Array() as array
