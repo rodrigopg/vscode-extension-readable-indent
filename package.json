@@ -36,7 +36,8 @@
 	"main": "./out/extension.js",
 	"activationEvents": [
 		"onCommand:extension.readableIndent.indent",
-		"onCommand:extension.readableIndent.indentAlpha"
+		"onCommand:extension.readableIndent.indentAlpha",
+		"onCommand:extension.readableIndent.reset"
 	],
 	"contributes": {
 		"configuration": [
@@ -58,6 +59,10 @@
 			{
 				"command": "extension.readableIndent.indentAlpha",
 				"title": "Indentação de variáveis - Ordem Alfabética"
+			},
+			{
+				"command": "extension.readableIndent.reset",
+				"title": "Remove a indentação"
 			}
 		],
 		"keybindings": [
@@ -72,6 +77,12 @@
 				"key": "ctrl+i ctrl+shift+a",
 				"mac": "cmd+i cmd+shift+a",
 				"when": "editorTextFocus && !editorReadonly"
+			},
+			{
+				"command": "extension.readableIndent.reset",
+				"key": "ctrl+i ctrl+s",
+				"mac": "cmd+i cmd+s",
+				"when": "editorTextFocus && !editorReadonly"
 			}
 		],
 		"menus": {
@@ -84,6 +95,11 @@
 				{
 					"command": "extension.readableIndent.indentAlpha",
 					"group": "2_indentation@3",
+					"when": "editorTextFocus && !editorReadonly"
+				},
+				{
+					"command": "extension.readableIndent.reset",
+					"group": "2_indentation@4",
 					"when": "editorTextFocus && !editorReadonly"
 				}
 			]

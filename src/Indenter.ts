@@ -10,6 +10,8 @@ type ConfigOptions = { minimumWhitespaceBeforePivot: number } | WorkspaceConfigu
  */
 class Indenter {
   // @description Flag to alphabetize lines of code when making readable
+  private _shouldReset: boolean = false;
+  // @description Flag to alphabetize lines of code when making readable
   private _alphabetize: boolean = false;
   // @description VSCode Workspace configuration for RI
   private _configOptions: ConfigOptions = {
@@ -71,7 +73,7 @@ class Indenter {
       this.locRaw = code.split(/\n/);
     }
 
-    this.locRaw = this.replaceSpaceWithTab(this.locRaw);
+    this.locRaw = this.pivots.process(this.locRaw, this._shouldReset);
 
     this.sortLines();
 
@@ -281,6 +283,13 @@ class Indenter {
    */
   public set alphabetize(alphabetize: boolean) {
     this._alphabetize = alphabetize;
+  }
+
+  /**
+   * Sets alphabetize flag
+   */
+  public set resetIndent(reset: boolean) {
+    this._shouldReset = reset;
   }
 
 }
