@@ -3,6 +3,9 @@ import Indenter from './Indenter';
 
 const replace = new Indenter();
 
+const resetIndent = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
+	formatText(textEditor, edit, false, true);
+};
 const indent = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
 	formatText(textEditor, edit);
 };
@@ -13,7 +16,7 @@ const indentAlpha = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit,
 /**
  * Perform indention and replacement
  */
-const formatText = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, alphabetize: boolean = false) => {
+const formatText = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, alphabetize: boolean = false, resetIndent: boolean = false) => {
 	const doc = textEditor.document;
 	const sel = textEditor.selection;
 	// must set config options for runtime changes
@@ -26,10 +29,9 @@ const formatText = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, 
 		// ensure that entire lines are being replaced as the granularity is line-based
 		const expandedSelection = new vscode.Range(firstLine.lineNumber, 0, lastLine.lineNumber, lastLine.text.length);
 
-		// pass in context like `tabSize`
 		replace.textEditorOptions = textEditor.options;
-		// tell Indenter to alphabetize
 		replace.alphabetize = alphabetize;
+		replace.resetIndent = resetIndent;
 		// replace with indented code
 		edit.replace(expandedSelection, replace.indent(doc.getText(expandedSelection)));
 		// re-select the newly replaced lines to keep visual context in editor
@@ -50,6 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// https://vscode-docs.readthedocs.io/en/stable/extensionAPI/vscode-api/#commands.registerTextEditorCommand
 	commands.push(vscode.commands.registerTextEditorCommand("extension.readableIndent.indent", indent));
 	commands.push(vscode.commands.registerTextEditorCommand("extension.readableIndent.indentAlpha", indentAlpha));
+	commands.push(vscode.commands.registerTextEditorCommand("extension.readableIndent.reset", resetIndent));
 
 	context.subscriptions.push(...commands);
 }

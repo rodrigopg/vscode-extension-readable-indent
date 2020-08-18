@@ -1,7 +1,7 @@
 import { TextEditorOptions, WorkspaceConfiguration } from "vscode";
 import customAlphaSort from './util/alpha-sort';
-import findEntireWordIndex from './util/string-util';
 import hash from './util/hash';
+import { Pivots } from './pivot';
 
 type ConfigOptions = { minimumWhitespaceBeforePivot: number } | WorkspaceConfiguration;
 
@@ -19,27 +19,16 @@ class Indenter {
   };
   // @description Lines of code split on newlines
   private locRaw: string[] = [];
-  // @description Lines of code tokenized on pivot char
-  private loc: string[][] = [[]];
-  // @description Capture of detected indent - preserves tab chars vs space chars
-  private initialIndent: string = '';
   // @description
   private _origin: string = '';
   // @description md5 hash of input
   private _originHash: string = '';
-  // @description Character to use when left-padding for indentation
-  private padChar: string = ' ';
-  // @description Detected character index of pivot character for left-justified indentation
-  private pivotIndexAlt: number = 0;
-  // @description Detected character for pivot
-  private pivotSeparator: string = ':=';
   // @description Expanding tabs to space for indentation, detected from workspace.editor settings
   private _textEditorOptions: TextEditorOptions = {
     tabSize: 2
   };
   // @description supported pivot character sequences
-  private pivots: any;
-
+  private pivots: Pivots = new Pivots();
 
   constructor() {
     this.reset();
@@ -49,13 +38,7 @@ class Indenter {
    * reset flags and detected values
    */
   private reset(): void {
-    this.initialIndent = '';
-    this.pivotIndexAlt = 0;
-    this.pivotSeparator = ':=';
-    this.pivots = {
-      'as': { count: 0, index: 0 },
-      ':=': { count: 0, index: 0 }
-    };
+    this.pivots = new Pivots();
   }
 
   /**
@@ -65,23 +48,18 @@ class Indenter {
   public indent(code: string): string {
     this.reset();
 
-    if (this.reuseOriginal(code)) {
-      this.locRaw = this._origin.split(/\n/);
-    } else {
-      this._origin = code;
-      this._originHash = hash(this._origin);
-      this.locRaw = code.split(/\n/);
-    }
+    // if (this.reuseOriginal(code)) {
+    // this.locRaw = this._origin.split(/\n/);
+    // } else {
+    this._origin = code;
+    this._originHash = hash(this._origin);
+    this.locRaw = code.split(/\n/);
+    // }
 
     this.locRaw = this.pivots.process(this.locRaw, this._shouldReset);
 
     this.sortLines();
-
-    this.determineIndentType();
-
-    this.splitLine();
-
-    return this.joinLines();
+    return this.locRaw.join('\n');
   }
 
   /**
@@ -92,165 +70,17 @@ class Indenter {
     if (this._originHash) {
       return hash(s) === this._originHash;
     }
-
     return false;
   }
 
+  /**
+   * Realiza a ordenação alfabética das linhas
+   */
   private sortLines(): void {
     // alpha sort if configuration is set
     if (this._alphabetize === true) {
       this.locRaw = customAlphaSort(this.locRaw);
     }
-  }
-
-  /**
-   * Determines indent type
-   * Detects pivot char sequence, and sets private var `pivotSeparator`
-   */
-  private determineIndentType(): void {
-    let focusPivot: string;
-    let focusPivotIndex: number = 99999;
-
-    this.locRaw.forEach(line => {
-      focusPivot = '';
-      focusPivotIndex = 99999;
-
-      for (let pivot in this.pivots) {
-        let idx = findEntireWordIndex(line, pivot);
-        this.pivots[pivot].index = (idx > -1) ? idx : 100000;
-
-        // logic to increment found pivot count
-        // massage counts when detecting pivots with common chars
-        // if (idx > -1 && pivot === '$') {
-        //   this.pivots[':='].count--;
-        // }
-      }
-
-      // if pivot(s) are found, determine which should be considered for focusing
-      for (let pivot in this.pivots) {
-        if (this.pivots[pivot].index < focusPivotIndex) {
-          focusPivot = pivot;
-          focusPivotIndex = this.pivots[pivot].index;
-        }
-      }
-
-      if (this.pivots[focusPivot] !== undefined) {
-        this.pivots[focusPivot].count++;
-      }
-
-      // determine min of indent/whitespace
-      const indent = line.substr(0, line.search(/\S/));
-
-      // TODO: when going from pivot to non-pivot, 
-      // the matched text is indented (undesirably?).  prevent whitespace creep
-      if (indent.length > 0) {
-        if (!this.initialIndent) {
-          this.initialIndent = indent;
-          // this.padChar = this.initialIndent.charAt(0);
-        }
-      }
-    });
-
-    // use counts to identify pivot char sequence
-    let pivotCount = 0;
-    for (let pivot in this.pivots) {
-      if (this.pivots[pivot].count > pivotCount) {
-        this.pivotSeparator = pivot;
-        pivotCount = this.pivots[pivot].count;
-      }
-    }
-  }
-
-  /**
-   * Cleans right whitespace
-   * @param line
-   * @returns string Line cleansed of right whitespace
-   */
-  private cleanRightWhitespace(line: string): string {
-    line = line.replace(/\s+$/g, '');
-    return line.trimRight();
-  }
-
-  /**
-   * Finds pivot index and seeds property `loc`
-   */
-  private splitLine() {
-    this.loc = this.locRaw.map(line_s => {
-      let focusPivotIndex = findEntireWordIndex(line_s, this.pivotSeparator);
-
-      if (focusPivotIndex > -1) {
-        const line = [
-          this.cleanRightWhitespace(line_s.substr(0, focusPivotIndex)),
-          line_s.substr(focusPivotIndex + this.pivotSeparator.length),
-        ];
-
-        // get pivot index for left-justified indentation
-        const altIndex = line[0].trim().length + this.initialIndent.length;
-        this.pivotIndexAlt = (altIndex > this.pivotIndexAlt) ? altIndex : this.pivotIndexAlt;
-
-        // if pivotIndexAlt is less than than the configured minimum, use the config value
-        this.pivotIndexAlt = (this.pivotIndexAlt > this._configOptions.minimumWhitespaceBeforePivot)
-          ? this.pivotIndexAlt
-          : this._configOptions.minimumWhitespaceBeforePivot;
-
-        return line;
-      }
-
-      return [line_s];
-    });
-  }
-
-  private joinLines(): string {
-    return this.loc.map(line => {
-      if (line[0] && line[1]) {
-        const line0 = line[0].trim();
-        const line1 = line[1].trim();
-
-        return [
-          this.initialIndent,
-          line0.padEnd(this.pivotIndexAlt - this.initialIndent.length, this.padChar),
-          ' ',
-          this.pivotSeparator,
-          ' ',
-          line1
-        ].join('');
-
-      } else {
-        return line.join('');//.replace(/[\n|\r]/gm, '');
-      }
-    }).join('\n');
-  }
-
-  private replaceSpaceWithTab(lines: string[]) {
-    let tabSize: number = 4;
-    let tab: string = "\t";
-    let spaces: string = ''.padEnd(tabSize, ' ');
-
-    // convert tabs to spaces
-    if (typeof this._textEditorOptions.tabSize === 'number') {
-      tabSize = this._textEditorOptions.tabSize;
-      spaces = ''.padEnd(tabSize, ' ');
-    }
-
-    for (let index = 0; index < lines.length; index++) {
-      // lines[index] = lines[index].replace(spaces,tab);
-      lines[index] = this.cleanRightWhitespace(lines[index]);
-    }
-
-    return lines;
-  }
-
-  private isUseablePivot(line: string, index: number): boolean {
-    let usable = true;
-    const contextChars = ['"', "'", '`', '(', ')'];
-
-    for (let i = 0, n = line.length; i < n && i < index; i++) {
-      if (contextChars.indexOf(line.charAt(i)) > -1) {
-        usable = !usable;
-      }
-    }
-
-    return usable;
   }
 
   /*****************************************************************************
