@@ -263,7 +263,10 @@ export class Pivots {
     private putCommentsBack(lines: string[]): string[] {
         for (let i = 0; i < lines.length; i++) {
             if (this.lineComments[i].trim() !== '') {
-                lines[i] += " " + this.lineComments[i];
+                if (lines[i].trim() !== '') {
+                    lines[i] += " ";
+                }
+                lines[i] += this.lineComments[i].trimLeft();
             }
         }
         return lines;
