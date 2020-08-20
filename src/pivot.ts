@@ -39,14 +39,18 @@ class Pivot {
     }
 
     evalLine(line: string, lineNumber: number): void {
-        let match = line.matchAll(this.rule);
-        let next = match.next();
+        let next = line.matchAll(this.rule).next();
+
         if (next.done) {
             return;
         }
 
         this.internalPivots?.forEach(internalPivot => {
-            internalPivot.evalLine(next.value[1], lineNumber);
+            if (next.value.length === 2) {
+                internalPivot.evalLine(next.value[1], lineNumber);
+            } else {
+                internalPivot.evalLine(next.value[0], lineNumber);
+            }
         });
 
         let pivotLine: PivotItens = { lineNumber: lineNumber, line: [] };
@@ -150,22 +154,22 @@ export class Pivots {
     constructor() {
         this.pivots = [];
 
-        let commaPivot = new Pivot(
-            ",", "Virgula",
-            new RegExp(/\,/, "gi"),
-        );
-        commaPivot.openIdentifier = ", ";
-
         this.addPivot(
             ":=", "Atribuição de valores",
-            new RegExp(/[\:\+\-]=/, "gi"),
-            undefined, " := "
+            new RegExp(/\:\=/, "gi"),
+            undefined
         );
+
+        // this.addPivot(
+        //     "=", "Atribuição de valores 2",
+        //     new RegExp(/(?!\:)(?:\=)/, "gi"),
+        //     undefined
+        // );
 
         this.addPivot(
             ":New(", "Metodo construtor",
             new RegExp(/(?:\:New\()+(.*)+(?:\))/, "gi"),
-            commaPivot, ":New(", ")"
+            this.commaPivot(), ":New(", ")"
         );
 
         // this.addPivot(
@@ -177,19 +181,28 @@ export class Pivots {
         this.addPivot(
             "{", "Arrays em linha",
             new RegExp(/(?:\{)(.+)(?:\})/, "gi"),
-            commaPivot, "{", "}"
+            this.commaPivot(), "{", "}"
         );
-
-        this.pivots.push(this.menudefPivot());
 
         this.addPivot(
             "as", "Tipagem da dados",
             new RegExp(/\bas\b/, "gi"),
             undefined, " as "
         );
+
+        // this.pivots.push(this.menudefPivot());
     }
 
-    addPivot(identifier: string, description: string, regExp: RegExp, internalPivot?: Pivot, openIdentifier: string = identifier, closeIdentifier?: string) {
+    commaPivot(): Pivot {
+        let commaPivot = new Pivot(
+            ",", "Virgula",
+            new RegExp(/\,/, "gi"),
+        );
+        commaPivot.openIdentifier = ", ";
+        return commaPivot;
+    }
+
+    addPivot(identifier: string, description: string, regExp: RegExp, internalPivot?: Pivot, openIdentifier?: string, closeIdentifier?: string) {
         let newPivot = new Pivot(
             identifier,
             description,
@@ -199,7 +212,9 @@ export class Pivots {
             newPivot.addInternalPivot(internalPivot);
         }
 
-        newPivot.openIdentifier = openIdentifier;
+        if (openIdentifier) {
+            newPivot.openIdentifier = openIdentifier;
+        }
 
         if (closeIdentifier) {
             newPivot.closeIdentifier = closeIdentifier;
@@ -235,7 +250,7 @@ export class Pivots {
 
             if (!matched.done) {
                 if (isUseablePivot(line, matched.value.index!)) {
-                index = matched.value.index!;
+                    index = matched.value.index!;
                     comments = matched.value[0];
                 }
             }
@@ -284,28 +299,34 @@ export class Pivots {
 
         let menudefPivot = new Pivot(
             "ADD OPTION", "MenuDef",
-            new RegExp(/ADD\s+OPTION.*$/, "gi")
+            new RegExp(/(?:ADD\s+OPTION)(.+)/, "gi")
         );
 
-        menudefPivot.addInternalPivot(new Pivot(
+        let title = new Pivot(
             "TITLE", "Opções TITLE MenuDef",
-            new RegExp(/\b(TITLE)\b/, "gim"),
-        ));
+            new RegExp(/(?:\bTITLE\b)(.+)/, "gi"),
+        );
 
-        menudefPivot.addInternalPivot(new Pivot(
+        let operation = new Pivot(
             "OPERATION", "Opções OPERATION MenuDef",
-            new RegExp(/\b(OPERATION)\b/, "gim"),
-        ));
+            new RegExp(/(?:\bOPERATION\b)(.+)/, "gi"),
+        );
 
-        menudefPivot.addInternalPivot(new Pivot(
+        let action = new Pivot(
             "ACTION", "Opções ACTION MenuDef",
-            new RegExp(/\b(ACTION)\b/, "gim"),
-        ));
+            new RegExp(/(?:\bACTION\b)(.+)/, "gi"),
+        );
 
-        menudefPivot.addInternalPivot(new Pivot(
+        let access = new Pivot(
             "ACCESS", "Opções ACCESS MenuDef",
-            new RegExp(/\b(ACCESS)\b/, "gim"),
-        ));
+            new RegExp(/(?:\ACCESS\b)(.+)/, "gi"),
+        );
+
+
+        menudefPivot.addInternalPivot(title);
+        title.addInternalPivot(operation);
+        operation.addInternalPivot(action);
+        action.addInternalPivot(access);
 
         return menudefPivot;
     }
