@@ -1,8 +1,4 @@
-import { normalize } from "path";
-import { getIndicesOf } from "./util/string-util";
-import { close, open } from "fs";
-
-type ExpressionUsable = { open: number, close: number };
+import { getIndicesOf, isUseablePivot } from "./util/string-util";
 
 interface PivotItem {
     size: number;
@@ -25,26 +21,12 @@ class Pivot {
     rule: RegExp;
     internalPivots?: Pivot[] = [];
     parent?: Pivot;
-    contextChars: ExpressionUsable[];
 
     constructor(identifier: string, description: string, rule: RegExp) {
         this.identifier = identifier;
+        this.openIdentifier = " " + identifier + " ";
         this.description = description;
         this.rule = rule;
-        this.contextChars = this.setContextChars();
-    }
-
-    setContextChars(): ExpressionUsable[] {
-        let contextChars: ExpressionUsable[] = [];
-
-        // contextChars.push({ open: '/'.charCodeAt(0) + '*'.charCodeAt(0), close: '*'.charCodeAt(0) + "/".charCodeAt(0) });
-        contextChars.push({ open: '"'.charCodeAt(0), close: '"'.charCodeAt(0) });
-        contextChars.push({ open: "'".charCodeAt(0), close: "'".charCodeAt(0) });
-        contextChars.push({ open: '`'.charCodeAt(0), close: '`'.charCodeAt(0) });
-        contextChars.push({ open: '['.charCodeAt(0), close: ']'.charCodeAt(0) });
-        contextChars.push({ open: '{'.charCodeAt(0), close: '}'.charCodeAt(0) });
-        contextChars.push({ open: '('.charCodeAt(0), close: ')'.charCodeAt(0) });
-        return contextChars;
     }
 
     addInternalPivot(pivot: Pivot) {
@@ -92,7 +74,7 @@ class Pivot {
         const index = getIndicesOf(regexp, line);
 
         index.forEach(i => {
-            if (!this.isUseablePivot(line, i)) {
+            if (!isUseablePivot(line, i)) {
                 return null;
             }
             lineSplit.push(line.substr(startIndex, i - startIndex));
@@ -102,28 +84,6 @@ class Pivot {
         lineSplit.push(line.substr(startIndex, line.length - startIndex));
 
         return lineSplit;
-    }
-
-    isUseablePivot(line: string, index: number): boolean {
-        let expression: number[] = [];
-
-        for (let i = 0; i < line.length && i < index; i++) {
-            for (let x = 0; x < this.contextChars.length; x++) {
-                const contextChar = this.contextChars[x];
-                const charCode = line.charCodeAt(i);
-                if (charCode === contextChar.open && (contextChar.open !== contextChar.close ||
-                    (contextChar.open === contextChar.close
-                        && charCode !== expression[expression.length - 1]))
-                ) {
-                    expression.push(charCode);
-                    break;
-                } else if (charCode === contextChar.close) {
-                    expression.pop();
-                    break;
-                }
-            }
-        }
-        return expression.length === 0;
     }
 
     joinLines(lines: string[], isInternalPivot: Boolean = false): string[] {
@@ -248,7 +208,6 @@ export class Pivots {
     }
 
     public process(lines: string[], reset: boolean): string[] {
-
         lines = this.removeComments(lines);
 
         lines = lines.map(line => {
@@ -271,22 +230,26 @@ export class Pivots {
     private removeComments(lines: string[]): string[] {
         lines = lines.map(line => {
             let matched = line.matchAll(/\/\/(.*)/g).next();
-            let index = line.length;
             let comments = "";
+            let index = line.length;
+
             if (!matched.done) {
-                comments = matched.value[0];
+                if (isUseablePivot(line, matched.value.index!)) {
                 index = matched.value.index!;
+                    comments = matched.value[0];
+                }
             }
             this.lineComments.push(comments);
             return line.substr(0, index);
         });
         return lines;
-
     }
 
     private putCommentsBack(lines: string[]): string[] {
         for (let i = 0; i < lines.length; i++) {
-            lines[i] += this.lineComments[i];
+            if (this.lineComments[i].trim() !== '') {
+                lines[i] += " " + this.lineComments[i];
+            }
         }
         return lines;
     }

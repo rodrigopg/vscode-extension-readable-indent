@@ -94,12 +94,12 @@
 				},
 				{
 					"command": "extension.readableIndent.indentAlpha",
-					"group": "2_indentation@3",
+					"group": "2_indentation@2",
 					"when": "editorTextFocus && !editorReadonly"
 				},
 				{
 					"command": "extension.readableIndent.reset",
-					"group": "2_indentation@4",
+					"group": "2_indentation@3",
 					"when": "editorTextFocus && !editorReadonly"
 				}
 			]
