@@ -108,9 +108,10 @@
 	"scripts": {
 		"compile": "tsc -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
-		"release": "standard-version",
+		"package": "npm run compile && vsce package",
 		"test": "npm run compile && node ./node_modules/vscode/bin/test",
 		"vscode:prepublish": "npm run compile",
+		"release": "standard-version",
 		"watch": "tsc -watch -p ./"
 	},
 	"devDependencies": {
