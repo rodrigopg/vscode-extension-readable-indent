@@ -1,7 +1,7 @@
 import { TextEditorOptions, WorkspaceConfiguration } from "vscode";
 import customAlphaSort from './util/alpha-sort';
 import hash from './util/hash';
-import { Pivots } from './pivot';
+import { Pivots } from './pivots';
 
 type ConfigOptions = { minimumWhitespaceBeforePivot: number } | WorkspaceConfiguration;
 
