@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [2.2.0](https://github.com/rodrigopg/vscode-extension-readable-indent/compare/v2.1.0...v2.2.0) (2020-08-26)
+
+
+### Bug Fixes
+
+* correção de espaço extra em comentários ([7921d5c](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/7921d5cf3aa6f8f3644709505e868d572559c1b7))
+* Correção na indentação com variados pivôs (:= += -=) estava substituindo incorretamente, correção na indentação com vírgulas ([f46b99e](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/f46b99ee684bcd4b9c3355ddedaa7277c40a8dc0))
+* Correção para evitar múltiplas ocorrências em identificadores que só podem ser indentados uma única vez. ([081357f](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/081357f599b4a6181bb7b0e45b2967a731e09818))
+* Organização de código ([39ccd35](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/39ccd35fad63b23471b3335bc06291b467d30ab4))
+
+
+### Features
+
+* Nova opção de reset da indentação, remove a indentação do código selecionado. Pode ser acionado pelo atalho --> CTRL+I CTRL+S ([caf3137](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/caf3137d5ab08ba295247d90421d7ec3aad385c1))
+
+
+
 # [2.1.0](https://github.com/rodrigopg/vscode-extension-readable-indent/compare/v2.0.3...v2.1.0) (2020-04-22)
 
 
