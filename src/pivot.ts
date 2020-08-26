@@ -21,6 +21,7 @@ class Pivot {
     rule: RegExp;
     internalPivots?: Pivot[] = [];
     parent?: Pivot;
+    allowMultipleInstances: Boolean = false;
 
     constructor(identifier: string, description: string, rule: RegExp) {
         this.identifier = identifier;
@@ -75,8 +76,10 @@ class Pivot {
     splitPivots(line: string, regexp: RegExp = this.rule): string[] | null {
         const lineSplit: string[] = [];
         let startIndex: number = 0;
-        const index = getIndicesOf(regexp, line);
-
+        let index = getIndicesOf(regexp, line);
+        if (!this.allowMultipleInstances) {
+            index = [index[0]];
+        }
         index.forEach(i => {
             if (!isUseablePivot(line, i)) {
                 return null;
