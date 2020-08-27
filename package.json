@@ -111,7 +111,7 @@
 		"package": "npm run compile && vsce package",
 		"test": "npm run compile && node ./node_modules/vscode/bin/test",
 		"vscode:prepublish": "npm run compile",
-		"release": "standard-version",
+		"release": "standard-version && git push --follow-tags origin master && vsce publish",
 		"watch": "tsc -watch -p ./"
 	},
 	"devDependencies": {
