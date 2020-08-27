@@ -8,7 +8,17 @@ Extensão baseada na [Readable Indent](https://marketplace.visualstudio.com/item
 
 ## Recursos
 
-Esta extensão vai facilitar a visualização do seu código, tornando-o mais legível. Ela vai realizar a indentação se baseando no seguinte identificador. **`:=`** Futuramente mais identificadores poderão ser adicionados.
+Esta extensão vai facilitar a visualização do seu código, tornando-o mais legível. Ela vai realizar a indentação dos seguintes identificadores:
+
+| Descrição                     | Identificador                  |
+|------------------------------	|------------------------------- |
+| Atribuição de variáveis       | `:=`       	                 |
+| Arrays  	                    | `{a, b, c, d}` 	             |
+| Métodos New                   | `:new(param1, nPar2, lPar3)`   |
+| AADD                          | `aadd(aArray, {nPar1, cPar2})` |
+
+
+*Futuramente mais identificadores poderão ser adicionados.*
 
 As seguintes indentações estão disponíveis:
 
@@ -26,6 +36,7 @@ As seguintes indentações estão disponíveis:
 |------------------------------	|---------------------	|-----------------------	|
 | Indentação                    | `cmd-i cmd-a`       	| `ctrl-i ctrl-a`       	|
 | Indentação Ordem Alfabética  	| `cmd-i cmd-shift-a` 	| `ctrl-i ctrl-shift-a` 	|
+| Resetar Indentação            | `cmd-i cmd-s`       	| `ctrl-i ctrl-s`       	|
 
 ## Erros conhecidos
 
