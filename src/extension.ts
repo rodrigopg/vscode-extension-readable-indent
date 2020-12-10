@@ -12,6 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
 	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.indent", indent));
 	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.indentAlpha", indentAlpha));
 	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.reset", resetIndent));
+	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.formatSQL", formatSQL));
 
 	context.subscriptions.push(...commands);
 }
@@ -35,6 +36,11 @@ const indentAlpha = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit,
 	indenter.alphabetize = true;
 	formatText(textEditor, edit);
 	indenter.alphabetize = false;
+};
+const formatSQL = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
+	indenter.formatSQL = true;
+	formatText(textEditor, edit);
+	indenter.formatSQL = false;
 };
 
 /**

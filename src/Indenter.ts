@@ -1,4 +1,5 @@
 import { TextEditorOptions, WorkspaceConfiguration } from "vscode";
+import { FormatSQL } from "./indenters/sql";
 import { Pivots } from './pivots';
 import customAlphaSort from './util/alpha-sort';
 import hash from './util/hash';
@@ -29,6 +30,13 @@ class Indenter {
 
   /** Flag to Reset Indentation */
   public resetIndent: boolean = false;
+
+  /** Flag to format sql lines of code when making readable */
+  public formatSQL: boolean = false;
+
+  public copySQL: boolean = false;
+
+
   /** @description Expanding tabs to space for indentation, detected from workspace.editor settings */
   private _textEditorOptions: TextEditorOptions = {
     tabSize: 2
@@ -56,6 +64,11 @@ class Indenter {
    * @returns string Indented as requested
    */
   public indent(code: string): string {
+    if (this.formatSQL) {
+      const sql = new FormatSQL(code);
+      code = sql.formatEmbeddedSQL(this.copySQL);
+      return code;
+    }
 
     this.lines = code.split(/\n/);
 
@@ -70,7 +83,7 @@ class Indenter {
   private sortLines(): void {
     if (this.alphabetize) {
       this.lines = customAlphaSort(this.lines);
-  }
+    }
   }
 }
 

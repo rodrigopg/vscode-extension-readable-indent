@@ -39,6 +39,9 @@ As seguintes indentações estão disponíveis:
 ### Reset Indentação
 ![left-justified](docs/indent-reset.gif)
 
+É possível indentar o seu código Embedded SQL, utilize o comando (CTRL+I CTRL+Q)
+### Beautify SQL
+![left-justified](docs/indent-alpha.gif)
 
 ## Erros conhecidos
 
