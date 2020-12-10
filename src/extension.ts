@@ -1,47 +1,6 @@
 import * as vscode from 'vscode';
 import Indenter from './Indenter';
 
-const replace = new Indenter();
-
-const resetIndent = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
-	formatText(textEditor, edit, false, true);
-};
-const indent = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
-	formatText(textEditor, edit);
-};
-const indentAlpha = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
-	formatText(textEditor, edit, true);
-};
-
-/**
- * Perform indention and replacement
- */
-const formatText = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, alphabetize: boolean = false, resetIndent: boolean = false) => {
-	const doc = textEditor.document;
-	const sel = textEditor.selection;
-	// must set config options for runtime changes
-	replace.configOptions = vscode.workspace.getConfiguration('extension.readableIntent');
-
-	try {
-		const firstLine = doc.lineAt(sel.start.line);
-		const lastLine = doc.lineAt(sel.end.line);
-
-		// ensure that entire lines are being replaced as the granularity is line-based
-		const expandedSelection = new vscode.Range(firstLine.lineNumber, 0, lastLine.lineNumber, lastLine.text.length);
-
-		replace.textEditorOptions = textEditor.options;
-		replace.alphabetize = alphabetize;
-		replace.resetIndent = resetIndent;
-		// replace with indented code
-		edit.replace(expandedSelection, replace.indent(doc.getText(expandedSelection)));
-		// re-select the newly replaced lines to keep visual context in editor
-		textEditor.selection = new vscode.Selection(expandedSelection.start, expandedSelection.end);
-	} catch (e) {
-		vscode.window.showInformationMessage(`${e.message}\n\nPlease report to https://github.com/rodrigopg/vscode-extension-readable-indent/issues`);
-		console.error(e);
-	}
-};
-
 /**
  * VSCode activation registers relevant commands - this extension requires a text selection
  * @param context
@@ -50,9 +9,9 @@ export function activate(context: vscode.ExtensionContext) {
 	const commands: vscode.Disposable[] = [];
 
 	// https://vscode-docs.readthedocs.io/en/stable/extensionAPI/vscode-api/#commands.registerTextEditorCommand
-	commands.push(vscode.commands.registerTextEditorCommand("extension.readableIndent.indent", indent));
-	commands.push(vscode.commands.registerTextEditorCommand("extension.readableIndent.indentAlpha", indentAlpha));
-	commands.push(vscode.commands.registerTextEditorCommand("extension.readableIndent.reset", resetIndent));
+	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.indent", indent));
+	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.indentAlpha", indentAlpha));
+	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.reset", resetIndent));
 
 	context.subscriptions.push(...commands);
 }
@@ -61,3 +20,53 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
 	console.log('@deactivate for indentacao-variaveis-advpl');
 }
+
+const indenter = new Indenter();
+
+const resetIndent = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
+	indenter.resetIndent = true;
+	formatText(textEditor, edit);
+	indenter.resetIndent = false;
+};
+const indent = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
+	formatText(textEditor, edit);
+};
+const indentAlpha = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
+	indenter.alphabetize = true;
+	formatText(textEditor, edit);
+	indenter.alphabetize = false;
+};
+
+/**
+ * Perform indention and replacement
+ */
+const formatText = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
+	const doc = textEditor.document;
+	const sel = textEditor.selection;
+	let indentedText = '';
+	// must set config options for runtime changes
+	indenter.configOptions = vscode.workspace.getConfiguration('extension.readableIntent');
+
+	try {
+		const firstLine = doc.lineAt(sel.start.line);
+		const lastLine = doc.lineAt(sel.end.line);
+
+		// ensure that entire lines are being replaced as the granularity is line-based
+		const expandedSelection = new vscode.Range(firstLine.lineNumber, 0, lastLine.lineNumber, lastLine.text.length);
+
+		indenter.textEditorOptions = textEditor.options;
+
+		// Indent the Code
+		indentedText = indenter.indent(doc.getText(expandedSelection));
+
+		// replace with indented code
+		if (!indenter.copySQL) {
+			edit.replace(expandedSelection, indentedText);
+			// re-select the newly replaced lines to keep visual context in editor
+			textEditor.selection = new vscode.Selection(expandedSelection.start, expandedSelection.end);
+		}
+	} catch (e) {
+		vscode.window.showInformationMessage(`${e.message}\n\nPlease report to https://github.com/rodrigopg/vscode-extension-readable-indent/issues`);
+		console.error(e);
+	}
+};

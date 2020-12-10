@@ -1,8 +1,8 @@
 {
 	"name": "indentacao-variaveis-advpl",
 	"publisher": "rodrigopg",
-	"displayName": "Indentação de variáveis para Advpl/TLPP",
-	"description": "Indentação de variáveis criadas no padrão Advpl para uma visão mais legível.",
+	"displayName": "Beautify ADVPL/TLPP",
+	"description": "Embelezador de código ADVPL para uma visão mais legível.",
 	"icon": "docs/favicon.png",
 	"qna": "marketplace",
 	"categories": [
@@ -16,7 +16,8 @@
 		"indentacao",
 		"indent",
 		"totvs",
-		"customize soluções"
+		"customize soluções",
+		"beautify"
 	],
 	"badges": [
 		{
@@ -35,9 +36,11 @@
 	},
 	"main": "./out/extension.js",
 	"activationEvents": [
-		"onCommand:extension.readableIndent.indent",
-		"onCommand:extension.readableIndent.indentAlpha",
-		"onCommand:extension.readableIndent.reset"
+		"onCommand:extension.beautifyadvpl.indent",
+		"onCommand:extension.beautifyadvpl.indentAlpha",
+		"onCommand:extension.beautifyadvpl.reset",
+		"onCommand:extension.beautifyadvpl.formatSQL",
+		"onCommand:extension.beautifyadvpl.copySQL"
 	],
 	"contributes": {
 		"configuration": [
@@ -53,54 +56,84 @@
 		],
 		"commands": [
 			{
-				"command": "extension.readableIndent.indent",
-				"title": "Indentação de variáveis"
+				"command": "extension.beautifyadvpl.indent",
+				"title": "Beautify ADVPL"
 			},
 			{
-				"command": "extension.readableIndent.indentAlpha",
-				"title": "Indentação de variáveis - Ordem Alfabética"
+				"command": "extension.beautifyadvpl.indentAlpha",
+				"title": "Beautify ADVPL em ordem alfabética"
 			},
 			{
-				"command": "extension.readableIndent.reset",
-				"title": "Remove a indentação"
+				"command": "extension.beautifyadvpl.reset",
+				"title": "Reset Indentação ADVPL"
+			},
+			{
+				"command": "extension.beautifyadvpl.formatSQL",
+				"title": "Beautify SQL"
+			},
+			{
+				"command": "extension.beautifyadvpl.copySQL",
+				"title": "Copiar como SQL"
 			}
 		],
 		"keybindings": [
 			{
-				"command": "extension.readableIndent.indent",
+				"command": "extension.beautifyadvpl.indent",
 				"key": "ctrl+i ctrl+a",
 				"mac": "cmd+i cmd+a",
 				"when": "editorTextFocus && !editorReadonly"
 			},
 			{
-				"command": "extension.readableIndent.indentAlpha",
+				"command": "extension.beautifyadvpl.indentAlpha",
 				"key": "ctrl+i ctrl+shift+a",
 				"mac": "cmd+i cmd+shift+a",
 				"when": "editorTextFocus && !editorReadonly"
 			},
 			{
-				"command": "extension.readableIndent.reset",
+				"command": "extension.beautifyadvpl.reset",
 				"key": "ctrl+i ctrl+s",
 				"mac": "cmd+i cmd+s",
 				"when": "editorTextFocus && !editorReadonly"
+			},
+			{
+				"command": "extension.beautifyadvpl.formatSQL",
+				"key": "ctrl+i ctrl+q",
+				"mac": "cmd+i cmd+q",
+				"when": "editorTextFocus && !editorReadonly"
+			},
+			{
+				"command": "extension.beautifyadvpl.copySQL",
+				"key": "ctrl+shit+c",
+				"mac": "cmd+shift+c",
+				"when": "editorTextFocus"
 			}
 		],
 		"menus": {
 			"editor/context": [
 				{
-					"command": "extension.readableIndent.indent",
+					"command": "extension.beautifyadvpl.indent",
 					"group": "2_indentation@1",
 					"when": "editorTextFocus && !editorReadonly"
 				},
 				{
-					"command": "extension.readableIndent.indentAlpha",
+					"command": "extension.beautifyadvpl.indentAlpha",
 					"group": "2_indentation@2",
 					"when": "editorTextFocus && !editorReadonly"
 				},
 				{
-					"command": "extension.readableIndent.reset",
+					"command": "extension.beautifyadvpl.reset",
 					"group": "2_indentation@3",
 					"when": "editorTextFocus && !editorReadonly"
+				},
+				{
+					"command": "extension.beautifyadvpl.formatSQL",
+					"group": "3_indentation@1",
+					"when": "editorTextFocus && !editorReadonly"
+				},
+				{
+					"command": "extension.beautifyadvpl.copySQL",
+					"group": "3_indentation@2",
+					"when": "editorTextFocus"
 				}
 			]
 		}
@@ -118,7 +151,7 @@
 		"@types/mocha": "^2.2.42",
 		"@types/node": "^10.17.20",
 		"cz-conventional-changelog": "^2.1.0",
-		"standard-version": "^5.0.2",
+		"standard-version": "^9.0.0",
 		"tslint": "^5.20.1",
 		"typescript": "^3.8.3",
 		"vscode": "^1.1.36"
@@ -130,5 +163,10 @@
 	},
 	"standard-version": {
 		"skip": {}
+	},
+	"dependencies": {
+		"copy-paste": "^1.3.0",
+		"npm": "^6.14.9",
+		"sql-formatter-plus": "^1.3.6"
 	}
 }

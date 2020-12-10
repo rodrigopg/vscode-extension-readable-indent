@@ -1,42 +1,44 @@
 <!-- [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/) -->
 
-# Indentação legível
+# Beautify ADVPL/TLPP
 
-Identação de declaração de variáveis de forma legível para código advpl/tlpp.
+Embelezador de código ADVPL/TLPP para ter uma visão mais legível.
 
-Extensão baseada na [Readable Indent](https://marketplace.visualstudio.com/items?itemName=cnojima.readable-indent) extensão feita para JS e portada para funcionar no advpl/tlpp
+## Uso
+1. Selecione a parte do código que deseja indentar.
+2. Ative o menu de contexto (clique direito), o atalho do teclado, ou o comando
+
+| Comando                      	  | Mac OSX             | Windows/Linux        	|
+|---------------------------------|---------------------|----------------------	|
+| Beautify AdvPL                  | `CMD+i CMD+a`       | `CTRL+i CTRL+a`      	|
+| Beautify AdvPL Ordem Alfabética | `CMD+i CMD+SHIFT+a` | `CTRL+i CTRL+SHIFT+a`	|
+| Resetar Indentação              | `CMD+i CMD+s`       | `CTRL+i CTRL+s`      	|
 
 ## Recursos
 
 Esta extensão vai facilitar a visualização do seu código, tornando-o mais legível. Ela vai realizar a indentação dos seguintes identificadores:
 
-| Descrição                     | Identificador                  |
-|------------------------------	|------------------------------- |
-| Atribuição de variáveis       | `:=`       	                 |
-| Arrays  	                    | `{a, b, c, d}` 	             |
-| Métodos New                   | `:new(param1, nPar2, lPar3)`   |
-| AADD                          | `aadd(aArray, {nPar1, cPar2})` |
+| Descrição   | Exemplo                        
+|-------------|--------------------------------
+| Atribuição  | `local aVar := {} as array`
+| Arrays  	  | `{a, b, c, d}`
+| Métodos New | `TRCell():New(oSec, "A1_COD","SA1")`
+| AADD        | `aadd(aArray, {nPar1, cPar2})`
 
 
 *Futuramente mais identificadores poderão ser adicionados.*
 
 As seguintes indentações estão disponíveis:
 
-### Indentação
+### Beautify AdvPL
 ![left-justified](docs/indent.gif)
 
-### Indentação com ordenação alfabética
+### Beautify AdvPL com ordenação alfabética
 ![left-justified](docs/indent-alpha.gif)
 
-## Uso
-1. Selecione a parte do código que deseja indentar.
-2. Ative o menu de contexto (clique direito), o atalho do teclado, ou o comando
+### Reset Indentação
+![left-justified](docs/indent-reset.gif)
 
-| Comando                      	| Mac OSX             	| Windows/Linux         	|
-|------------------------------	|---------------------	|-----------------------	|
-| Indentação                    | `cmd-i cmd-a`       	| `ctrl-i ctrl-a`       	|
-| Indentação Ordem Alfabética  	| `cmd-i cmd-shift-a` 	| `ctrl-i ctrl-shift-a` 	|
-| Resetar Indentação            | `cmd-i cmd-s`       	| `ctrl-i ctrl-s`       	|
 
 ## Erros conhecidos
 
