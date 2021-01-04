@@ -14,7 +14,7 @@ export class FormatSQL {
         this.codeAsSql = code;
     }
 
-    public formatEmbeddedSQL(copySql: boolean = false): string {
+    public formatEmbeddedSQL(copySql: boolean = false, pasteSql: boolean = false): string {
         this.copySQL = copySql;
 
         this.buildRules();
@@ -39,8 +39,8 @@ export class FormatSQL {
     private getConfig(insertSpaces: Boolean = true, tabSize: number = 4) {
         return {
             indent: insertSpaces ? ' '.repeat(tabSize) : '\t',
-            uppercase: 'false',//getSetting('sql-formatter', 'uppercase', false),
             language: 'sql',
+            uppercase: this.config.get("sql_uppercase"),
             linesBetweenQueries: 2
         };
     }
@@ -106,13 +106,14 @@ export class FormatSQL {
             }
         ];
     }
+    }
 
     private getCompany() {
-        return "01";
+        return this.config.get("sql_company");
     }
 
     private getBranch() {
-        return "0101";
+        return this.config.get("sql_branch");
     }
 
     private setFirstIndent() {

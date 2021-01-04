@@ -46,6 +46,20 @@
 		"configuration": [
 			{
 				"properties": {
+					"extension.beautifyadvpl.sql_company": {
+						"default": "01",
+						"title": "Empresa",
+						"type": "string"
+					},
+					"extension.beautifyadvpl.sql_branch": {
+						"default": "01",
+						"title": "Filial",
+						"type": "string"
+					},
+					"extension.beautifyadvpl.sql_uppercase": {
+						"default": false,
+						"title": "Uppercase",
+						"type": "boolean"
 					}
 				}
 			}
