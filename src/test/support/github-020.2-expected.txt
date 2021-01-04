@@ -1,8 +1,0 @@
-$test = array(
-  'else'           => "value",
-  'expected'       => "value",
-  'for-a-long-key' => 1,
-  'is'             => 1,
-  'right'          => "value",
-  'something'      => 1,
-);
