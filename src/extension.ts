@@ -13,6 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.indentAlpha", indentAlpha));
 	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.reset", resetIndent));
 	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.formatSQL", formatSQL));
+	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.copySQL", copySQL));
 
 	context.subscriptions.push(...commands);
 }
@@ -41,6 +42,11 @@ const formatSQL = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, t
 	indenter.formatSQL = true;
 	formatText(textEditor, edit);
 	indenter.formatSQL = false;
+};
+const copySQL = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
+	indenter.copySQL = true;
+	formatSQL(textEditor, edit, thisArg);
+	indenter.copySQL = false;
 };
 
 /**

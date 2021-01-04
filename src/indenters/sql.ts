@@ -1,3 +1,5 @@
+import * as vscode from 'vscode';
+
 export class FormatSQL {
     private code: string = '';
     public codeAsSql: string = '';
@@ -5,6 +7,7 @@ export class FormatSQL {
     private rules: RegExpFindAndReplace[] = [];
     private firstIndentSize: number = 0;
     private copySQL: boolean = false;
+    private config = vscode.workspace.getConfiguration("extension.beautifyadvpl");
 
     constructor(code: string) {
         this.code = code;
@@ -18,14 +21,14 @@ export class FormatSQL {
         this.setFirstIndent();
         this.mapArgs();
 
-        if (!this.copySQL) {
-            let fmt = require('sql-formatter-plus');
-            this.code = fmt.format(this.code, this.getConfig());
-            this.applyIndent();
-        } else {
+        if (copySql) {
             // Copy code as SQL to Clipboard
             const copy = require("copy-paste");
             copy.copy(this.codeAsSql);
+        } else {
+            let fmt = require('sql-formatter-plus');
+            this.code = fmt.format(this.code, this.getConfig());
+            this.applyIndent();
         }
 
         this.putBackArgs();
