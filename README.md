@@ -43,6 +43,11 @@ As seguintes indentações estão disponíveis:
 ### Beautify SQL
 ![left-justified](docs/indent-alpha.gif)
 
+É possível tambêm copiar o seu código do Embedded SQL convertido para SQL nativa, removendo identificadores do Advpl
+
+### Copiar como SQL
+![left-justified](docs/indent-alpha.gif)
+
 ## Erros conhecidos
 
 Caso encontre, nos avise.
