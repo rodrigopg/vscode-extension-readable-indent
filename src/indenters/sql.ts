@@ -39,9 +39,9 @@ export class FormatSQL {
     private getConfig(insertSpaces: Boolean = true, tabSize: number = 4) {
         return {
             indent: insertSpaces ? ' '.repeat(tabSize) : '\t',
-            language: 'sql',//getSetting('sql-formatter', 'dialect', 'sql'),
             uppercase: 'false',//getSetting('sql-formatter', 'uppercase', false),
-            linesBetweenQueries: 2//getSetting('sql-formatter', 'linesBetweenQueries', 2)
+            language: 'sql',
+            linesBetweenQueries: 2
         };
     }
 

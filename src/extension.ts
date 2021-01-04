@@ -16,11 +16,12 @@ export function activate(context: vscode.ExtensionContext) {
 	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.copySQL", copySQL));
 
 	context.subscriptions.push(...commands);
+	console.log('@activate beautify-advpl');
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-	console.log('@deactivate for indentacao-variaveis-advpl');
+	console.log('@deactivate for beautify-advpl');
 }
 
 const indenter = new Indenter();
@@ -56,8 +57,6 @@ const formatText = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) 
 	const doc = textEditor.document;
 	const sel = textEditor.selection;
 	let indentedText = '';
-	// must set config options for runtime changes
-	indenter.configOptions = vscode.workspace.getConfiguration('extension.readableIntent');
 
 	try {
 		const firstLine = doc.lineAt(sel.start.line);

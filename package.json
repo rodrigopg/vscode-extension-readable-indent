@@ -46,10 +46,6 @@
 		"configuration": [
 			{
 				"properties": {
-					"extension.readableIntent.minimumWhitespaceBeforePivot": {
-						"default": 0,
-						"title": "Quantidade de espaços utilizados na indentação do código",
-						"type": "integer"
 					}
 				}
 			}
@@ -57,15 +53,15 @@
 		"commands": [
 			{
 				"command": "extension.beautifyadvpl.indent",
-				"title": "Beautify ADVPL"
+				"title": "Beautify AdvPL"
 			},
 			{
 				"command": "extension.beautifyadvpl.indentAlpha",
-				"title": "Beautify ADVPL em ordem alfabética"
+				"title": "Beautify AdvPL - Ordem Alfabética"
 			},
 			{
 				"command": "extension.beautifyadvpl.reset",
-				"title": "Reset Indentação ADVPL"
+				"title": "Reset Beautify AdvPL"
 			},
 			{
 				"command": "extension.beautifyadvpl.formatSQL",

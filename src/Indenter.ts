@@ -1,25 +1,12 @@
-import { TextEditorOptions, WorkspaceConfiguration } from "vscode";
+import { TextEditorOptions } from "vscode";
 import { FormatSQL } from "./indenters/sql";
 import { Pivots } from './pivots';
 import customAlphaSort from './util/alpha-sort';
-import hash from './util/hash';
-
-type ConfigOptions = { minimumWhitespaceBeforePivot: number } | WorkspaceConfiguration;
 
 /**
  * Indenter
  */
 class Indenter {
-  // @description VSCode Workspace configuration for RI
-  private _configOptions: ConfigOptions = {
-    minimumWhitespaceBeforePivot: 10
-  };
-
-  /** sets VSCode configuration options */
-  public set configOptions(options: ConfigOptions) {
-    this._configOptions = options;
-  }
-
   /** Sets text editor options */
   public set textEditorOptions(options: TextEditorOptions) {
     this._textEditorOptions = options;
@@ -35,6 +22,7 @@ class Indenter {
   public formatSQL: boolean = false;
 
   public copySQL: boolean = false;
+  public pasteSQL: boolean = false;
 
 
   /** @description Expanding tabs to space for indentation, detected from workspace.editor settings */
@@ -65,18 +53,10 @@ class Indenter {
    */
   public indent(code: string): string {
     if (this.formatSQL) {
-      const sql = new FormatSQL(code);
-      code = sql.formatEmbeddedSQL(this.copySQL);
-      return code;
+      return this.formatEmbeddedSQL(code);
     }
 
-    this.lines = code.split(/\n/);
-
-    this.reset();
-    this.lines = this.pivots.process(this.lines, this.resetIndent);
-    this.sortLines();
-
-    return this.lines.join('\n');
+    return this.formatAdvpl(code);
   }
 
   /** Realiza a ordenação alfabética das linhas */
@@ -84,6 +64,23 @@ class Indenter {
     if (this.alphabetize) {
       this.lines = customAlphaSort(this.lines);
     }
+  }
+
+  private formatAdvpl(code: string): string {
+    this.reset();
+    this.lines = this.pivots.process(code.split(/\n/), this.resetIndent);
+    this.sortLines();
+
+    return this.lines.join('\n');
+  }
+  
+  private formatEmbeddedSQL(code: string): string {
+    const sql = new FormatSQL(code);
+    if (this.pasteSQL) {
+      sql.convertToEmbeddedSQL();
+    }
+    code = sql.formatEmbeddedSQL(this.copySQL);
+    return code;
   }
 }
 
