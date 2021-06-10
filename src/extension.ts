@@ -14,6 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
 	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.reset", resetIndent));
 	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.formatSQL", formatSQL));
 	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.copySQL", copySQL));
+	commands.push(vscode.commands.registerTextEditorCommand("extension.beautifyadvpl.pasteSQL", pasteSQL));
 
 	context.subscriptions.push(...commands);
 	console.log('@activate beautify-advpl');
@@ -48,6 +49,11 @@ const copySQL = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thi
 	indenter.copySQL = true;
 	formatSQL(textEditor, edit, thisArg);
 	indenter.copySQL = false;
+};
+const pasteSQL = (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, thisArg: any): void => {
+	indenter.pasteSQL = true;
+	formatSQL(textEditor, edit, thisArg);
+	indenter.pasteSQL = false;
 };
 
 /**

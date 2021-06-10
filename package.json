@@ -40,7 +40,8 @@
 		"onCommand:extension.beautifyadvpl.indentAlpha",
 		"onCommand:extension.beautifyadvpl.reset",
 		"onCommand:extension.beautifyadvpl.formatSQL",
-		"onCommand:extension.beautifyadvpl.copySQL"
+		"onCommand:extension.beautifyadvpl.copySQL",
+		"onCommand:extension.beautifyadvpl.pasteSQL"
 	],
 	"contributes": {
 		"configuration": [
@@ -84,6 +85,10 @@
 			{
 				"command": "extension.beautifyadvpl.copySQL",
 				"title": "Copiar como SQL"
+			},
+			{
+				"command": "extension.beautifyadvpl.pasteSQL",
+				"title": "Colar como Embbedded SQL"
 			}
 		],
 		"keybindings": [
@@ -116,6 +121,12 @@
 				"key": "ctrl+shit+c",
 				"mac": "cmd+shift+c",
 				"when": "editorTextFocus"
+			},
+			{
+				"command": "extension.beautifyadvpl.pasteSQL",
+				"key": "ctrl+shit+v",
+				"mac": "cmd+shift+v",
+				"when": "editorTextFocus && !editorReadonly"
 			}
 		],
 		"menus": {
@@ -144,6 +155,11 @@
 					"command": "extension.beautifyadvpl.copySQL",
 					"group": "3_indentation@2",
 					"when": "editorTextFocus"
+				},
+				{
+					"command": "extension.beautifyadvpl.pasteSQL",
+					"group": "3_indentation@3",
+					"when": "editorTextFocus && !editorReadonly"
 				}
 			]
 		}

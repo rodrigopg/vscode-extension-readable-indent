@@ -7,6 +7,7 @@ export class FormatSQL {
     private rules: RegExpFindAndReplace[] = [];
     private firstIndentSize: number = 0;
     private copySQL: boolean = false;
+    private pasteSQL: boolean = false;
     private config = vscode.workspace.getConfiguration("extension.beautifyadvpl");
 
     constructor(code: string) {
@@ -66,46 +67,74 @@ export class FormatSQL {
         });
     }
 
-    private buildRules() {
-        this.rules = [
-            {
-                // Comments
-                search: new RegExp(/\/\/(.*$)/gim),
-                identifier: "slashslashcomments",
-                replace: "/*$1*/"
-            },
-            {
-                // %Table:SA1%
-                search: new RegExp(/%Table:([a-z0-9]{3})%/gim),
-                identifier: "percentTableTwoDotspercentTable",
-                replace: '$1' + this.getCompany() + '0'
-            },
-            {
-                // %NotDel%%
-                search: new RegExp(/%NotDel%/gim),
-                identifier: "percentNotDelpercent",
-                replace: "D_E_L_E_T_=' '"
-            },
-            {
-                // BETWEEN %Exp:MV_PAR01% AND %Exp:MV_PAR02%
-                search: new RegExp(/(BETWEEN)\s*%exp:([^%]{1,})%\s*(AND)\s*%exp:([^%]{1,})%/gim),
-                identifier: "percentBetweenExpTwoDotspercent",
-                replace: "$1 '$2' $3 '$4'"
-            },
-            {
-                // %Exp:MV_PAR01%
-                search: new RegExp(/%exp:([^%]{1,})%/gim),
-                identifier: "percentExpTwoDotspercent",
-                replace: "'$1'"
-            },
-            {
-                // %xFilial:SA1%        
-                search: new RegExp(/%xFilial:([^%]{1,})%/gim),
-                identifier: "percentxFilialTwoDotspercent",
-                replace: "'" + this.getBranch() + "'"
-            }
-        ];
-    }
+    private buildRules(pasteSQL: boolean = false) {
+        if (pasteSQL) {
+            this.rules = [
+                {
+                    // %Table:SA1%
+                    search: new RegExp(/([a-z0-9]{3})[0-9]{2}0/gim),
+                    identifier: "percentTableTwoDotspercentTable",
+                    replace: '%Table:$1%'
+                },
+                {
+                    // %NotDel%%
+                    search: new RegExp(/(D_E_L_E_T_\s*=\s*['"]\s+['"]|D_E_L_E_T_\s*<>\s*['"]\*['"])/gim),
+                    identifier: "percentNotDelpercent",
+                    replace: "%NotDel%"
+                },
+                {
+                    // %xFilial:SA1%
+                    search: new RegExp(/([a-z0-9]{2})(_FILIAL\s*=\s*)('.*[^']{1,4}')/gim),
+                    identifier: "percentxFilialTwoDotspercent",
+                    replace: "$1$2%xFilial:S$1%" //"'" + this.getBranch() + "'"
+                },
+                {
+                    // %xFilial:DA1%
+                    search: new RegExp(/([a-z0-9]{3})_FILIAL\s*=\s*('.*[^']{1,4}')/gim),
+                    identifier: "percentxFilialTwoDotspercent",
+                    replace: "$1$2%xFilial:S$1%" //"'" + this.getBranch() + "'"
+                }
+            ];
+        } else {
+            this.rules = [
+                {
+                    // Comments
+                    search: new RegExp(/\/\/(.*$)/gim),
+                    identifier: "slashslashcomments",
+                    replace: "/*$1*/"
+                },
+                {
+                    // %Table:SA1%
+                    search: new RegExp(/%Table:([a-z0-9]{3})%/gim),
+                    identifier: "percentTableTwoDotspercentTable",
+                    replace: '$1' + this.getCompany() + '0'
+                },
+                {
+                    // %NotDel%%
+                    search: new RegExp(/%NotDel%/gim),
+                    identifier: "percentNotDelpercent",
+                    replace: "D_E_L_E_T_=' '"
+                },
+                {
+                    // BETWEEN %Exp:MV_PAR01% AND %Exp:MV_PAR02%
+                    search: new RegExp(/(BETWEEN)\s*%exp:([^%]{1,})%\s*(AND)\s*%exp:([^%]{1,})%/gim),
+                    identifier: "percentBetweenExpTwoDotspercent",
+                    replace: "$1 '$2' $3 '$4'"
+                },
+                {
+                    // %Exp:MV_PAR01%
+                    search: new RegExp(/%exp:([^%]{1,})%/gim),
+                    identifier: "percentExpTwoDotspercent",
+                    replace: "'$1'"
+                },
+                {
+                    // %xFilial:SA1%        
+                    search: new RegExp(/%xFilial:([^%]{1,})%/gim),
+                    identifier: "percentxFilialTwoDotspercent",
+                    replace: "'" + this.getBranch() + "'"
+                }
+            ];
+        }
     }
 
     private getCompany() {
@@ -135,6 +164,24 @@ export class FormatSQL {
         let expression: string = replaceArgs(next, e);
         this.codeAsSql = this.codeAsSql.replace(next.value[0], expression);
     }
+
+    public convertToEmbeddedSQL(): string {
+        const cp = require("copy-paste");
+        this.code = cp.paste();
+
+        this.buildRules(true);
+        this.rules.forEach((e) => {
+            while (true) {
+                let next = this.code.matchAll(e.search).next();
+                if (next.done) { break; }
+                this.code = this.code.replace(next.value[0], replaceArgs(next, e));
+            }
+        });
+
+        this.formatEmbeddedSQL();
+        return this.code;
+
+    }
 }
 
 type RegExpFindAndReplace = { search: RegExp, identifier: string, replace?: string }; // Default replace should be $0. the expression result itself
@@ -143,8 +190,11 @@ type Args = { old: string, new: string };
 
 function replaceArgs(next: IteratorResult<RegExpMatchArray, any>, e: RegExpFindAndReplace): string {
     let s: string = e.replace ?? next.value[0];
+
     for (let i = 0; i <= next.value.length; i++) {
-        s = s.replace("$" + i, next.value[i]);
+        do {
+            s = s.replace("$" + i, next.value[i]);
+        } while (s !== s.replace("$" + i, next.value[i]))
     }
     return s;
 }
