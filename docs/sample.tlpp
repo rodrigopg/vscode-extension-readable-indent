@@ -11,5 +11,5 @@ Local a123 := Array() as array
 
 BeginSql alias "TMP"
     SELECT B1_COD, B1_DESC, B1_TIPO, B1_UM, CASE WHEN 1 = 1 THEN 1 ELSE 0 END TESTE
-    FROM %Table:SB1% B1
+    FROM %Table:SB1% B1 WHERE %NotDel% AND B1_FILIAL = %xFilial:SB1%
 EndSql
