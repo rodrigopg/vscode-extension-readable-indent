@@ -1,6 +1,16 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [2.3.0](https://github.com/rodrigopg/vscode-extension-readable-indent/compare/v2.2.1...v2.3.0) (2021-10-21)
+
+
+### Features
+
+* Nova opção "Beautify AdvPL". Selecione o código SQL e utilize o atalho CTRL+I CTRL+Q no Windows ou CMD+I CMD+Q no MacOS. ([7495fc1](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/7495fc1c5dd0f876295d1b79a34feed1d62e57a9))
+* Nova opção de COLAR COMO SQL que faz a copia de uma SQL nativa e converte para Embedded SQL. Use pelo atalho Mac (CMD+SHIFT+V) ou Win (CTRL+SHIFT+V). ([f1b61d2](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/f1b61d2eade24c73928a9a746aed0c4ec32a37e7))
+* Nova opção de COPIAR COMO SQL que faz a copia de uma Embedded SQL como SQL nativa, ou seja, sem identificadores do Advpl como %Table% %Exp% e afins. Use pelo atalho Mac (CMD+SHIFT+C) ou Win (CTRL+SHIFT+C) ([e43a3d0](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/e43a3d01da112276bc8f5b82a16a1bd974ee6a76))
+* Novas configurações para definir empresa e filial padrões na conversão de SQL. ([62495f8](https://github.com/rodrigopg/vscode-extension-readable-indent/commit/62495f87ecdf4b592eb075340967f191a12f2899))
 
 ## [2.2.1](https://github.com/rodrigopg/vscode-extension-readable-indent/compare/v2.2.0...v2.2.1) (2020-08-27)
 
